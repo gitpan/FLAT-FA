@@ -1,0 +1,12 @@
+Changes
+Makefile.PL
+MANIFEST
+README
+t/FLAT-FA.t
+lib/FLAT/FA.pm
+lib/FLAT/FA/DFA.pm
+lib/FLAT/FA/NFA.pm
+lib/FLAT/FA/PFA.pm
+lib/FLAT/FA/RE.pm
+lib/FLAT/FA/PRE.pm
+
