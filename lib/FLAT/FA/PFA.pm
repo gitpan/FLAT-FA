@@ -1,27 +1,4 @@
-# $Revision: 1.2 $ $Date: 2006/02/21 14:43:40 $ $Author: estrabd $
-
-=head1 NAME
-
-PFA - A parallel finite automata base class
-
-=head1 SYNOPSIS
-
-    use PFA;
-
-=head1 DESCRIPTION
-
-This module is implements a paralle finite automata,
-and the conversion of such to a non deterministic
-finite automata;
-
-One key between PFA implementation an PFA & DFA is that the PFA
-may contain more than one start node since it may depict
-threads of concurrent execution.  The main purpose of this 
-module is to convert a PFA to an PFA.
-
-B<Methods>
-
-=cut
+# $Revision: 1.4 $ $Date: 2006/02/27 17:42:18 $ $Author: estrabd $
 
 package FLAT::FA::PFA;
 
@@ -31,12 +8,6 @@ use Carp;
 
 use FLAT::FA::NFA;
 use Data::Dumper;
-
-=item C<new>
-
-Returns a new PFA object
-
-=cut
 
 sub new {
   my $class = shift;
@@ -55,14 +26,6 @@ sub new {
   }, $class;
 }
 
-=over 1
-
-=item C<load_file>
-
-Creates PFA from file
-
-=cut
-
 sub load_file {
   my $self = shift;
   my $file = shift;
@@ -76,12 +39,6 @@ sub load_file {
     $self->load_string($string);
   }
 }
-
-=item C<load_string>
-
-Creates PFA from string
-
-=cut
 
 sub load_string {
   my $self = shift;
@@ -124,16 +81,6 @@ sub load_string {
   return;
 }
 
-=over 1
-
-=item C<jump_start>
-
-Returns an PFA with 1 start state, one final state, and 
-a single transistion on the given symbol; if a symbol is
-not provided, epsilon is used.
-
-=cut
-
 sub jump_start {
   my $self = shift;
   my $PFA = FLAT::FA::PFA->new();
@@ -157,16 +104,6 @@ sub jump_start {
   return $PFA;
 }
 
-=over 18
-
-=item C<find_tied>
-
-Determines the tied nodes in $self, and stores them in $self->{_TIED} for
-easy lookup.  Use $self->is_tied(@testset) to determine if a set of nodes
-contains anything tied on lambda
-
-=cut
-
 sub find_tied {
   my $self = shift;
   my $lambda = $self->get_lambda_symbol();
@@ -187,26 +124,10 @@ sub find_tied {
   return; 
 }
 
-=over 18
-
-=item C<get_tied>
-
-Determines if any tied nodes are contained in the provided node set
-
-=cut
-
 sub get_tied {
   my $self = shift;
   return @{$self->{_TIED}}; 
 }
-
-=over 18
-
-=item C<has_tied>
-
-Determines if all nodes in a tied set are contained in the provided node set
-
-=cut
 
 sub has_tied {
   my $self = shift;
@@ -230,12 +151,6 @@ sub has_tied {
   }
   return $ok; 
 }
-
-=item C<extract_tied>
-
-Extracts all tied nodes in a set and returns a flattened array
-
-=cut
 
 sub extract_tied {
   my $self = shift;
@@ -261,12 +176,6 @@ sub extract_tied {
   }
   return @ret;
 }
-
-=item C<to_nfa>
-
-To NFA Stuff - convert PFA to NFA using subset construction technique
-
-=cut
 
 sub to_nfa {
   my $self = shift;
@@ -349,28 +258,12 @@ sub to_nfa {
   return $NFA;
 }
 
-=over 18
-
-=item C<serialize_name>
-
-Creates a string based on the items in the array;
-
-=cut
-
 sub  serialize_name {
   my $self = shift;
   # note that the nature of Perl subs causes @_ to be flattened
   my $name = join('_',sort(@_));
   return $name;
 }
-
-=over 18
-
-=item C<set_start>
-
-Sets start node, calls FA->add_node
-
-=cut
 
 sub set_start {
   my $self = shift;
@@ -383,24 +276,10 @@ sub set_start {
   return;
 }
 
-=item C<get_start>
-
-Returns start nodes
-
-=cut
-
 sub get_start {
   my $self = shift;
   return @{$self->{_START_NODES}};
 }
-
-=over 18
-
-=item C<set_active>
-
-Sets active node, calls FA->add_node
-
-=cut
 
 sub set_active {
   my $self = shift;
@@ -409,22 +288,10 @@ sub set_active {
   return;
 }
 
-=item C<get_active>
-
-Returns active nodes
-
-=cut
-
 sub get_active {
   my $self = shift;
   return @{$self->{_ACTIVE_NODES}};
 }
-
-=item C<add_node>
-
-Adds a node label to the node array if it does not already exist (handles dups)
-
-=cut
 
 sub add_node {
   my $self = shift;
@@ -436,24 +303,10 @@ sub add_node {
   return;
 }
 
-=item C<get_nodes>
-
-Returns the array of all nodes
-
-=cut
-
-# Returns array of nodes
 sub get_nodes {
   my $self = shift;
   return @{$self->{_NODES}};  
 }
-
-=item C<add_transition>
-
-Adds a transition - adds node and symbol as well - unique nodes and symbols
-enforced by PFA->add_node and PFA->add_symbol
-
-=cut
 
 sub add_transition {
   my $self = shift;
@@ -468,14 +321,6 @@ sub add_transition {
   return;
 }
 
-=item C<get_transition_on>
-
-Returns transition(s), as an array, for a specific node
-on a specific input symbol; This is not in FA.pm as it is
-PFA specific.
-
-=cut
-
 sub get_transition_on {
   my $self = shift;
   my $node = shift;
@@ -489,23 +334,10 @@ sub get_transition_on {
   return @ret;  
 }
 
-=item C<is_start>
-
-Checks to see if given node is in the start node array
-
-=cut
-
-# Will test if the string passed to it is a node in the set of start nodes
 sub is_start {
   my $self = shift;
   return $self->is_member(shift,$self->get_start());
 }
-
-=item C<set_epsilon>
-
-Sets epsilon symbol - not working with Perl special vars - $,@,%, etc
-
-=cut
 
 sub set_epsilon {
   my $self = shift;
@@ -514,22 +346,10 @@ sub set_epsilon {
   return;
 }
 
-=item C<get_epsilon_symbol>
-
-Returns epsilon symbol
-
-=cut
-
 sub get_epsilon_symbol {
   my $self = shift;
   return $self->{_EPSILON};
 }
-
-=item C<get_epsilon_transitions>
-
-Returns all epsilon transitions for a particular node; node must exist
-
-=cut
 
 sub get_epsilon_transitions {
   my $self = shift;
@@ -543,23 +363,11 @@ sub get_epsilon_transitions {
   return @ret;  
 }
 
-=item C<delete_epsilon>
-
-Deletes epsilon symbol
-
-=cut
-
 sub delete_epsilon {
   my $self = shift;
   delete($self->{_EPSILON});
   return;
 }
-
-=item C<set_lambda>
-
-Sets lambda symbol - not working with Perl special vars - $,@,%, etc
-
-=cut
 
 sub set_lambda {
   my $self = shift;
@@ -568,22 +376,10 @@ sub set_lambda {
   return;
 }
 
-=item C<get_lambda_symbol>
-
-Returns lambda symbol
-
-=cut
-
 sub get_lambda_symbol {
   my $self = shift;
   return $self->{_LAMBDA};
 }
-
-=item C<get_lambda_transitions>
-
-Returns all lambda transitions for a particular node; node must exist
-
-=cut
 
 sub get_lambda_transitions {
   my $self = shift;
@@ -597,38 +393,17 @@ sub get_lambda_transitions {
   return @ret;  
 }
 
-=item C<delete_lambda>
-
-Deletes lambda symbol
-
-=cut
-
 sub delete_lambda {
   my $self = shift;
   delete($self->{_LAMBDA});
   return;
 }
 
-=item C<is_node>
-
-Tests if given string is the name of a node
-
-=cut
-
-# Will test if the string passed to it is the same as a label of any node
 sub is_node {
   my $self = shift;
   return $self->is_member(shift,$self->get_nodes());
 }
 
-=item C<add_final>
-
-Adds a list of node lables to the final nodes array; handles dups,
-and ensures nodes are added to set of nodes
-
-=cut
-
-# Adds node to final (accepting) node stack
 sub add_final {
   my $self = shift;
   foreach my $node (@_) {
@@ -639,38 +414,15 @@ sub add_final {
   return;
 }
 
-=item C<get_final>
-
-Returns the array of all final nodes
-
-=cut
-
-# Returns array of final nodes
 sub get_final {
   my $self = shift;
   return @{$self->{_FINAL_NODES}}
 }
 
-
-=item C<is_final>
-
-Checks to see if given node is in the final node array
-
-=cut
-
-# Will test if the string passed to it is the same as a label of any node
 sub is_final {
   my $self = shift;
   return $self->is_member(shift,$self->get_final());
 }
-
-=over 1
-
-=item C<clone>
-
-Returns a distinct clone of self
-
-=cut
 
 sub clone {
   my $self = shift;
@@ -688,13 +440,6 @@ sub clone {
   }
   return $PFA;
 }
-
-=item C<append_pfa>
-
-Concatenates start node of given PFA to the common final node of self;
-usage: my PFA->append_pfa($PFA1);
-
-=cut
 
 sub append_pfa {
   my $self = shift;
@@ -733,13 +478,6 @@ sub append_pfa {
   return;
 }
 
-=item C<prepend_pfa>
-
-Concatenates start node of self to the common final node of the given PFA;
-usage: my PFA->prepend_pfa($PFA1);
-
-=cut
-
 sub prepend_pfa {
   my $self = shift;
   my $PFA = shift;
@@ -776,13 +514,6 @@ sub prepend_pfa {
   # nodes not renumbered - can done explicity by user
   return;
 }
-
-=item C<or_pfa>
-
-Creates a common start node joined by an epsilon transition;
-usage: my PFA->or_pfa($PFA1);
-
-=cut
 
 sub or_pfa {
   my $self = shift;
@@ -824,12 +555,6 @@ sub or_pfa {
   $self->pinch();
   return;
 }
-
-=item C<interleave_pfa>
-
-Joins 2 PFAs using an interleave (concurrent process).
-
-=cut
 
 sub interleave_pfa {
   my $self = shift;
@@ -885,13 +610,6 @@ sub interleave_pfa {
   return;
 }
 
-=item C<kleene>
-
-Wraps given PFA in Kleene Closure
-usage: my PFA->kleene();
-
-=cut
-
 sub kleene {
   my $self = shift;
   my $newstart = crypt(rand 8,join('',[rand 8, rand 8]));
@@ -917,14 +635,6 @@ sub kleene {
   return;
 }
 
-=item C<pinch>
-
-Creates epsilon transitions from all final nodes to a common final node; .
-usage: my $PFA3 = PFA->pinch_pfa($PFA1); does nothing if there is only one
-final node
-
-=cut
-
 sub pinch {
   my $self = shift;
   # do only if there is more than one final node
@@ -946,13 +656,6 @@ sub pinch {
   # want the nodes renamed, so it can be used explicitly
   return;
 }
-
-=item C<rename_nodes>
-
-Renames a single node; warns and changes nothing if name conflicts
-with another node
-
-=cut
 
 sub rename_node {
   my $self = shift;
@@ -1031,19 +734,6 @@ sub rename_node {
   return;
 }
 
-=item C<ensure_unique_nodes>
-
-Compares the names of the nodes in $self and the 
-provided FA, and only renames a node (in $self)
-if a name collision is detected; if the disambiguation
-string causes a new collision, a random string is created
-using crypt() until there is no collision detected
-
-Usage:
-$self->ensure_unique_nodes($PFA1,'string_to_disambiguate');
-
-=cut
-
 sub ensure_unique_nodes {
   my $self = shift;
   my $PFA1 = shift;
@@ -1062,13 +752,6 @@ sub ensure_unique_nodes {
   return;
 }
 
-=item C<number_nodes>
-
-Numbers nodes 0-# of nodes;  first appends node name with a
-random string to avoid conflicts
-
-=cut
-
 sub number_nodes {
   my $self = shift;
   my $number = 0;
@@ -1080,19 +763,13 @@ sub number_nodes {
     $number++;
   }
   # rename nodes as actual numbers    
-  my $number = 0;
+  $number = 0;
   foreach ($self->get_nodes()) {
     $self->rename_node($_,$number);
     $number++;
   }
   return;  
 }
-
-=item C<append_node_names>
-
-Appends node names with the specified suffix
-
-=cut
 
 sub append_node_names {
   my $self = shift;
@@ -1108,13 +785,6 @@ sub append_node_names {
   return;  
 }
 
-
-=item C<prepend_node_names>
-
-Prepends node names with the specified prefix
-
-=cut
-
 sub prepend_node_names {
   my $self = shift;
   my $prefix = shift;
@@ -1128,12 +798,6 @@ sub prepend_node_names {
   }
   return;  
 }
-
-=item C<rename_symbol>
-
-Renames symbol in pfa
-
-=cut
 
 # renames symbol
 sub rename_symbol {
@@ -1169,12 +833,6 @@ sub rename_symbol {
   }
   return;
 }
-
-=item C<info>
-
-Return string with info
-
-=cut
 
 sub info {
   my $self = shift;
@@ -1215,12 +873,6 @@ sub info {
   return $out;
 }
 
-=item C<serialize>
-
-Prints a valid string suitable for an input to stdout
-
-=cut
-
 sub serialize {
   my $self = shift;
   my $out = '';
@@ -1251,7 +903,26 @@ sub serialize {
 
 1;
 
-=back
+__END__
+
+=head1 NAME
+
+PFA - A parallel finite automata base class
+
+=head1 SYNOPSIS
+
+    use PFA;
+
+=head1 DESCRIPTION
+
+This module is implements a paralle finite automata,
+and the conversion of such to a non deterministic
+finite automata;
+
+One key between PFA implementation an PFA & DFA is that the PFA
+may contain more than one start node since it may depict
+threads of concurrent execution.  The main purpose of this 
+module is to convert a PFA to an PFA.
 
 =head1 AUTHOR
 

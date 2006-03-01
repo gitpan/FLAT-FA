@@ -5,13 +5,12 @@
 
 # change 'tests => 1' to 'tests => last_test_to_print';
 
-use Test::More tests => 82;
+use Test::More tests => 81;
 use lib qw(../lib);
 BEGIN { use_ok('FLAT::FA') };
 BEGIN { use_ok('FLAT::FA::DFA') };
 BEGIN { use_ok('FLAT::FA::NFA') };
 BEGIN { use_ok('FLAT::FA::PFA') };
-BEGIN { use_ok('FLAT::FA::RE') };
 BEGIN { use_ok('FLAT::FA::PRE') };
 
 #########################

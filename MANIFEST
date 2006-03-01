@@ -2,7 +2,9 @@ Changes
 Makefile.PL
 MANIFEST
 README
-t/FLAT-FA.t
+t/FLAT.t
+t/FLAT-FA-RE.t
+t/FLAT-FA-PRE.t
 lib/FLAT/FA.pm
 lib/FLAT/FA/DFA.pm
 lib/FLAT/FA/NFA.pm

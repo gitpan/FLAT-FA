@@ -1,23 +1,4 @@
-# $Revision: 1.2 $ $Date: 2006/02/21 14:43:40 $ $Author: estrabd $
-
-=head1 NAME
-
-FA - A finite automata base class
-
-=head1 SYNOPSIS
-
-    use FA;
-
-=head1 DESCRIPTION
-
-This module is a base finite automata 
-used by NFA and DFA to encompass 
-common functions.  It is probably of no use
-other than to organize the DFA and NFA modules.
-
-B<Methods>
-
-=cut
+# $Revision: 1.4 $ $Date: 2006/02/27 17:42:18 $ $Author: estrabd $
 
 package FLAT::FA;
 
@@ -26,14 +7,6 @@ use strict;
 use Carp;
 
 use Data::Dumper;
-
-=over 18
-
-=item C<set_start>
-
-Sets start state, calls FA->add_state
-
-=cut
 
 sub set_start {
   my $self = shift;
@@ -45,22 +18,10 @@ sub set_start {
   return;
 }
 
-=item C<get_start>
-
-Returns start state name as string
-
-=cut
-
 sub get_start {
   my $self = shift;
   return $self->{_START_STATE};
 }
-
-=item C<is_start>
-
-Tests is string is the start state
-
-=cut
 
 sub is_start {
   my $self = shift;
@@ -70,12 +31,6 @@ sub is_start {
   if ($self->{_START_STATE} eq $test) {$ok++};
   return $ok;
 }
-
-=item C<add_state>
-
-Adds a state label to the state array if it does not already exist (handles dups)
-
-=cut
 
 sub add_state {
   my $self = shift;
@@ -87,30 +42,11 @@ sub add_state {
   return;
 }
 
-=item C<get_states>
-
-Returns the array of all states
-
-=cut
-
 # Returns array of states
 sub get_states {
   my $self = shift;
   return @{$self->{_STATES}};  
 }
-
-=item C<ensure_unique_states>
-
-Compares the names of the states in $self and the 
-provided FA, and only renames a state (in $self)
-if a name collision is detected; if the disambiguation
-string causes a new collision, a random string is created
-using crypt() until there is no collision detected
-
-Usage:
-$self->ensure_unique_states($NFA1,'string_to_disambiguate');
-
-=cut
 
 sub ensure_unique_states {
   my $self = shift;
@@ -130,13 +66,6 @@ sub ensure_unique_states {
   return;
 }
 
-=item C<number_states>
-
-Numbers states 0-# of states;  first appends state name with a
-random string to avoid conflicts
-
-=cut
-
 sub number_states {
   my $self = shift;
   my $number = 0;
@@ -148,19 +77,13 @@ sub number_states {
     $number++;
   }
   # rename states as actual numbers    
-  my $number = 0;
+  $number = 0;
   foreach ($self->get_states()) {
     $self->rename_state($_,$number);
     $number++;
   }
   return;  
 }
-
-=item C<append_state_names>
-
-Appends state names with the specified suffix
-
-=cut
 
 sub append_state_names {
   my $self = shift;
@@ -176,13 +99,6 @@ sub append_state_names {
   return;  
 }
 
-
-=item C<prepend_state_names>
-
-Prepends state names with the specified prefix
-
-=cut
-
 sub prepend_state_names {
   my $self = shift;
   my $prefix = shift;
@@ -197,24 +113,11 @@ sub prepend_state_names {
   return;  
 }
 
-=item C<is_state>
-
-Tests if given string is the name of a state
-
-=cut
-
 # Will test if the string passed to it is the same as a label of any state
 sub is_state {
   my $self = shift;
   return $self->is_member(shift,$self->get_states());
 }
-
-=item C<add_final>
-
-Adds a list of state lables to the final states array; handles dups
-and ensures state is in set of states $self->{{STATES}
-
-=cut
 
 # Adds state to final (accepting) state stack
 sub add_final {
@@ -231,12 +134,6 @@ sub add_final {
   return;
 }
 
-=item C<remove_final>
-
-Removes the given state from $self->{_FINAL_STATES}
-
-=cut
-
 sub remove_final {
   my $self = shift;
   my $remove = shift;
@@ -250,36 +147,17 @@ sub remove_final {
   return;
 }
 
-=item C<get_final>
-
-Returns the array of all final states
-
-=cut
-
 # Returns array of final states
 sub get_final {
   my $self = shift;
   return @{$self->{_FINAL_STATES}}
 }
 
-
-=item C<is_final>
-
-Checks to see if given state is in the final state array
-
-=cut
-
 # Will test if the string passed to it is the same as a label of any state
 sub is_final {
   my $self = shift;
   return $self->is_member(shift,$self->get_final());
 }
-
-=item C<add_symbol>
-
-Adds symbol to the symbol array; handles dups
-
-=cut
 
 # Adds symbol
 sub add_symbol {
@@ -292,35 +170,17 @@ sub add_symbol {
   return;
 }
 
-=item C<is_symbol>
-
-Checks to see if given symbol is in the symbol array
-
-=cut
-
 # Will test if the string passed to it is the same as a label of any symbol
 sub is_symbol {
   my $self = shift;
   return $self->is_member(shift,@{$self->{_SYMBOLS}});
 }
 
-=item C<get_symbols>
-
-Returns array of all symbols
-
-=cut
-
 # Returns array of all symbols
 sub get_symbols {
   my $self = shift;
   return @{$self->{_SYMBOLS}}; 
 }
-
-=item C<get_transition>
-
-Returns hash of all transitions (symbols and next states) for given state
-
-=cut
 
 # Returns a hash of all transitions (symbols and next states) for specified state
 sub get_transition {
@@ -330,23 +190,10 @@ sub get_transition {
   return %{$self->{_TRANSITIONS}{$state}};  
 }
 
-=item C<get_all_transitions>
-
-Returns hash of all transitions for all states and symbols
-
-=cut
-
 sub get_all_transitions {
   my $self = shift;
   return %{$self->{_TRANSITIONS}};
 }
-
-
-=item C<has_transition_on>
-
-Tests if given state has a transition on given symbol
-
-=cut
 
 sub has_transition_on {
   my $self = shift;
@@ -359,12 +206,6 @@ sub has_transition_on {
   return $ok;
 }
 
-=item C<has_transitions>
-
-Tests if given state has a transition on given symbol
-
-=cut
-
 sub has_transitions {
   my $self = shift;
   my $state = shift;
@@ -374,13 +215,6 @@ sub has_transitions {
   }
   return $ok;
 }
-
-
-=item C<delete_transition>
-
-Deletes transition given the state and the symbol
-
-=cut
 
 sub delete_transition {
   my $self = shift;
@@ -392,12 +226,6 @@ sub delete_transition {
   return;  
 }
 
-=item C<to_file>
-
-Dumps FA to file in the proper input file format
-
-=cut
-
 sub to_file {
   my $self = shift;
   my $file = shift;
@@ -406,17 +234,6 @@ sub to_file {
   print FH $self->to_string();
   close(FH);
 }
-
-=over 18
-
-=item C<compliment>
-
-Returns compliment of 2 arrays - i.e., the items that they
-do not have in common; requires arrays be passed by reference;
-example:
-  my @compliment = $self->compliment(\@set1,\@set2);
-
-=cut
 
 sub  compliment {
   my $self = shift;
@@ -445,12 +262,6 @@ sub  compliment {
   return @ret;  
 }
 
-=item C<is_member>
-
-Tests if string is in given array
-
-=cut
-
 # General subroutine used to test if an element is already in an array
 sub is_member {
   my $self = shift;
@@ -461,23 +272,9 @@ sub is_member {
     if (grep {$_ eq $test} @_) {
       $ret++;
     }
-#    foreach (@_) {
-#      if (defined($_)) {
-#	if ($test eq $_) {
-#	  $ret++;
-#	  last;
-#	}
-#      }
-#    }
   }
   return $ret;
 }
-
-=item C<DESTROY>
-
-Called automatically when object is no longer needed
-
-=cut
 
 sub DESTROY {
   return;
@@ -485,7 +282,22 @@ sub DESTROY {
 
 1;
 
-=back
+__END__
+
+=head1 NAME
+
+FA - A finite automata base class
+
+=head1 SYNOPSIS
+
+    use FA;
+
+=head1 DESCRIPTION
+
+This module is a base finite automata 
+used by NFA and DFA to encompass 
+common functions.  It is probably of no use
+other than to organize the DFA and NFA modules.
 
 =head1 AUTHOR
 
@@ -509,10 +321,8 @@ Anonymous CVS Checkout at L<http://www.brettsbsd.net/cgi-bin/viewcvs.cgi/>
 
 This suite of modules started off as a homework assignment for a compiler
 class I took for my MS in computer science at the University of Southern
-Mississippi.  
+Mississippi.  It then became the basis for my MS research. and thesis.
 
 =head1 COPYRIGHT
 
 This code is released under the same terms as Perl.
-
-=cut

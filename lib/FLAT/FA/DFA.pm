@@ -1,21 +1,4 @@
-# $Revision: 1.2 $ $Date: 2006/02/21 14:43:40 $ $Author: estrabd $
-
-=head1 NAME
-
-DFA - A determinisitic finite automata base class
-
-=head1 SYNOPSIS
-
-    use DFA;
-
-=head1 DESCRIPTION
-
-This module is implements a deterministic finite automata,
-including the testing of strings accepted by the DFA.
-
-B<Methods>
-
-=cut
+# $Revision: 1.4 $ $Date: 2006/02/27 17:42:18 $ $Author: estrabd $
 
 package FLAT::FA::DFA;
 
@@ -27,34 +10,16 @@ use FLAT::FA::NFA;
 use FLAT::FA::RE;
 use Data::Dumper;
 
-=item C<new>
-
-Returns a new FA object
-
-=cut
-
 sub new {
   my $class = shift;
   bless {
-    _START_STATE => undef,     # start states -> plural!
+    _START_STATE => undef,  # start states -> plural!
     _STATES => [],          # Set of all states
     _FINAL_STATES => [],    # Set of final states, subset of _STATES
     _SYMBOLS => [],         # Symbols
     _TRANSITIONS => {},     # Transition table
   }, $class;
 }
-
-
-=over 1
-
-=item C<jump_start>
-
-Returns an DFA with 1 start state, one final state, and 
-a single transistion on the given symbol; if a symbol is
-not provided, only a single state that is both the start
-and end state is returned
-
-=cut
 
 sub jump_start {
   my $self = shift;
@@ -81,14 +46,6 @@ sub jump_start {
   return $DFA;
 }
 
-=over 1 
-
-=item C<load_file>
-
-Load DFA from file
-
-=cut
-
 sub load_file {
   my $self = shift;
   my $file = shift;
@@ -102,12 +59,6 @@ sub load_file {
     $self->load_string($string);
   }
 }
-
-=item C<load_string>
-
-Load DFA from string
-
-=cut
 
 sub load_string {
   my $self = shift;
@@ -143,14 +94,6 @@ sub load_string {
   }  
 }
 
-=over 1
-
-=item C<clone>
-
-Returns a distinct clone of self
-
-=cut
-
 sub clone {
   my $self = shift;
   my $DFA = FLAT::FA::DFA->new();
@@ -166,11 +109,6 @@ sub clone {
   return $DFA;
 }
 
-=item C<to_nfa>
-
-Returns an NFA; everything is copied exactly, but it is of class NFA 
-=cut
-
 sub to_nfa {
   my $self = shift;
   my $NFA = FLAT::FA::NFA->new();
@@ -185,13 +123,6 @@ sub to_nfa {
   }
   return $NFA;  
 }
-
-=item C<minimize>
-
-Minimizes number of states and transitions required to accept the regular language 
-described by original $self; returns an array of the states removed
-
-=cut
 
 sub minimize() {
   my $self = shift;
@@ -333,14 +264,6 @@ sub minimize() {
   return @removed;
 }
 
-=item C<delete_state>
-
-Deletes state and all references to it...if the start start or only final state is deleted, a loud warning,
-messages will be issued; accepts an arbitrarily long list of states to delete, so you could 
-do $dfa->delete_state(@states) or $dfa->delete_state($state);
-
-=cut
-
 sub delete_state {
   my $self = shift();
   my @del_states = @_;
@@ -384,13 +307,6 @@ sub delete_state {
   }
   return;
 }
-
-=item C<rename_states>
-
-Renames a single state; warns and changes nothing if name conflicts
-with another state
-
-=cut
 
 sub rename_state {
   my $self = shift;
@@ -447,12 +363,6 @@ sub rename_state {
   return;
 }
 
-=item C<rename_symbol>
-
-Renames symbol in dfa
-
-=cut
-
 # Adds symbol
 sub rename_symbol {
   my $self = shift;
@@ -486,12 +396,6 @@ sub rename_symbol {
   return;
 }
 
-=item C<add_transition>
-
-Adds transition - note, one state per char...no subsets, that is what NFA is for :)
-
-=cut
-
 sub add_transition {
   my $self = shift;
   my $state = shift;
@@ -499,13 +403,6 @@ sub add_transition {
   $self->{_TRANSITIONS}{$state}{$symbol} = shift;
   return;
 }
-
-=item C<get_transition_on>
-
-Get transitions on input symbol from specified state; this
-is not in FA.pm as it is DFA specific.
-
-=cut
 
 sub get_transition_on {
   my $self = shift;
@@ -520,23 +417,10 @@ sub get_transition_on {
   return $ret;  
 }
 
-=item C<reverse_dfa>
-
-Will return a DFA object that is the reverse of the current one.
-
-=cut
-
 sub reverse_dfa {
   my $self = shift;
   print "Convert to NFA, reverse that, then convert back to DFA and minimize...\n";
 }
-
-=item C<to_gdl>
-
-Outputs a Graph Description Language (GDL) file that can be visualized
-using the program aiSee http://www.aisee.com/gdl/nutshell/intro.htm
-
-=cut
 
 sub to_gdl {
   my $self = shift;
@@ -558,12 +442,6 @@ sub to_gdl {
   $gdl .= "}";
   return $gdl;
 }
-
-=item C<info>
-
-Diagnostics, transition information
-
-=cut
 
 sub info {
   my $self = shift;
@@ -597,13 +475,6 @@ sub info {
   return $out;
 }
 
-=item C<serialize>
-
-Prints a valid string suitable for an input to stdout
-
-=cut
-
-
 sub serialize {
   my $self = shift;
   my $out = '';
@@ -619,12 +490,6 @@ sub serialize {
   }
   return $out;
 }
-
-=item C<is_valid>
-
-Gives true (1) or false (0) as to if a string is valid
-
-=cut
 
 sub is_valid {
   my $self = shift;
@@ -659,12 +524,6 @@ sub is_valid {
   return $ok;
 }
 
-=item C<get_last_state>
-
-Returns accepting state, undef if string is not valid
-
-=cut
-
 sub get_last_state {
   my $self = shift;
   my $string = shift;
@@ -691,12 +550,6 @@ sub get_last_state {
   }
   return $curr;
 }
-
-=item C<get_path>
-
-Returns path taken
-
-=cut
 
 sub get_path {
   my $self = shift;
@@ -726,45 +579,19 @@ sub get_path {
   return @path;
 }
 
-=item C<generate_random>
-
-Generates random DFA; not implemented
-
-=cut
-
 sub generate_random {
   my $self = shift;
 }
-
-
-=item C<pump_strings>
-
-Generates accepted strings based on string length
-closures will not be repeated, but will be denoted with '*'; not implemented.
-
-=cut
 
 sub pump_strings {
   my $self = shift;
   return "Coming soon!";
 }
 
-=item C<init_string_pump>
-
-Used to initiate iterative string pumping;
-
-=cut
-
 sub init_string_pump {
   my $self = shift;
   return "Coming soon!";
 }
-
-=item C<pump_next>
-
-Used to get next pumped string when being used iteratively;
-
-=cut
 
 sub pump_next {
   my $self = shift;
@@ -773,7 +600,20 @@ sub pump_next {
 
 1;
 
-=back
+__END__
+
+=head1 NAME
+
+DFA - A determinisitic finite automata base class
+
+=head1 SYNOPSIS
+
+    use DFA;
+
+=head1 DESCRIPTION
+
+This module is implements a deterministic finite automata,
+including the testing of strings accepted by the DFA.
 
 =head1 AUTHOR
 

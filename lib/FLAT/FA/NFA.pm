@@ -1,22 +1,4 @@
-# $Revision: 1.2 $ $Date: 2006/02/21 14:43:40 $ $Author: estrabd $
-
-=head1 NAME
-
-NFA - A non deterministic finite automata base class
-
-=head1 SYNOPSIS
-
-    use NFA;
-
-=head1 DESCRIPTION
-
-This module implements a non deterministic finite automata,
-including support for epsilon transitions and conversion
-to a deterministic finite automata.
-
-B<Methods>
-
-=cut
+# $Revision: 1.3 $ $Date: 2006/02/27 17:42:18 $ $Author: estrabd $
 
 package FLAT::FA::NFA;
 
@@ -26,13 +8,6 @@ use Carp;
 
 use FLAT::FA::DFA;
 use Data::Dumper;
-
-
-=item C<new>
-
-Returns a new FA object
-
-=cut
 
 sub new {
   my $class = shift;
@@ -45,16 +20,6 @@ sub new {
     _EPSILON => 'epsilon',  # how an epsilon transition is represented
   }, $class;
 }
-
-=over 1
-
-=item C<jump_start>
-
-Returns an NFA with 1 start state, one final state, and 
-a single transistion on the given symbol; if a symbol is
-not provided, epsilon is used.
-
-=cut
 
 sub jump_start {
   my $self = shift;
@@ -80,15 +45,6 @@ sub jump_start {
   return $NFA;
 }
 
-
-=over 1
-
-=item C<load_file>
-
-Creates NFA from file
-
-=cut
-
 sub load_file {
   my $self = shift;
   my $file = shift;
@@ -102,12 +58,6 @@ sub load_file {
     $self->load_string($string);
   }
 }
-
-=item C<load_string>
-
-Creates NFA from string
-
-=cut
 
 sub load_string {
   my $self = shift;
@@ -145,14 +95,6 @@ sub load_string {
   }  
 }
 
-=over 1
-
-=item C<clone>
-
-Returns a distinct clone of self
-
-=cut
-
 sub clone {
   my $self = shift;
   my $NFA = FLAT::FA::NFA->new();
@@ -168,13 +110,6 @@ sub clone {
   }
   return $NFA;
 }
-
-=item C<append_nfa>
-
-Concatenates start state of given NFA to the common final state of self;
-usage: my NFA->append_nfa($NFA1);
-
-=cut
 
 sub append_nfa {
   my $self = shift;
@@ -215,13 +150,6 @@ sub append_nfa {
   return;
 }
 
-=item C<prepend_nfa>
-
-Concatenates start state of self to the common final state of the given NFA;
-usage: my NFA->prepend_nfa($NFA1);
-
-=cut
-
 sub prepend_nfa {
   my $self = shift;
   my $NFA = shift;
@@ -261,13 +189,6 @@ sub prepend_nfa {
   # states not renumbered - can done explicity by user
   return;
 }
-
-=item C<or_nfa>
-
-Creates a common start state joined by an epsilon transition;
-usage: my NFA->or_nfa($NFA1);
-
-=cut
 
 sub or_nfa {
   my $self = shift;
@@ -316,14 +237,6 @@ sub or_nfa {
   return;
 }
 
-
-=item C<kleene>
-
-Wraps given NFA in Kleene Closure
-usage: my NFA->kleene();
-
-=cut
-
 sub kleene {
   my $self = shift;
   my $newstart = crypt(rand 8,join('',[rand 8, rand 8]));
@@ -349,14 +262,6 @@ sub kleene {
   return;
 }
 
-=item C<pinch>
-
-Creates epsilon transitions from all final states to a common final state; .
-usage: my $NFA3 = NFA->pinch_nfa($NFA1); does nothing if there is only one
-final state
-
-=cut
-
 sub pinch {
   my $self = shift;
   # do only if there is more than one final state
@@ -378,12 +283,6 @@ sub pinch {
   # want the states renamed, so it can be used explicitly
   return;
 }
-
-=item C<reverse>
-
-Reverses an NFA
-
-=cut
 
 sub reverse {
   my $self = shift;
@@ -407,13 +306,6 @@ sub reverse {
   }
   return;
 }
-
-=item C<rename_states>
-
-Renames a single state; warns and changes nothing if name conflicts
-with another state
-
-=cut
 
 sub rename_state {
   my $self = shift;
@@ -474,12 +366,6 @@ sub rename_state {
   return;
 }
 
-=item C<rename_symbol>
-
-Renames symbol in nfa
-
-=cut
-
 # renames symbol
 sub rename_symbol {
   my $self = shift;
@@ -515,14 +401,6 @@ sub rename_symbol {
   return;
 }
 
-=item C<add_transition>
-
-Adds a transition - adds state and symbol as well - unique states and symbols
-enforced by NFA->add_state and NFA->add_symbol; since this is an NFA, transitions
-on $symbol from $state may be added to multiple destinations
-
-=cut
-
 sub add_transition {
   my $self = shift;
   my $state = shift;
@@ -539,14 +417,6 @@ sub add_transition {
   return;
 }
 
-=item C<get_transition_on>
-
-Returns transition(s), as an array, for a specific state
-on a specific input symbol; This is not in FA.pm as it is
-NFA specific.
-
-=cut
-
 sub get_transition_on {
   my $self = shift;
   my $state = shift;
@@ -560,12 +430,6 @@ sub get_transition_on {
   return @ret;  
 }
 
-=item C<set_epsilon>
-
-Sets epsilon symbol - not working with Perl special vars - $,@,%, etc
-
-=cut
-
 sub set_epsilon {
   my $self = shift;
   my $epsilon = shift;
@@ -573,22 +437,10 @@ sub set_epsilon {
   return;
 }
 
-=item C<get_epsilon_symbol>
-
-Returns epsilon symbol
-
-=cut
-
 sub get_epsilon_symbol {
   my $self = shift;
   return $self->{_EPSILON};
 }
-
-=item C<get_epsilon_transitions>
-
-Returns all epsilon transitions for a particular state; state must exist
-
-=cut
 
 sub get_epsilon_transitions {
   my $self = shift;
@@ -602,23 +454,11 @@ sub get_epsilon_transitions {
   return @ret;  
 }
 
-=item C<delete_epsilon>
-
-Deletes epsilon symbol
-
-=cut
-
 sub delete_epsilon {
   my $self = shift;
   delete($self->{_EPSILON});
   return;
 }
-
-=item C<to_dfa>
-
-To DFA Stuff - convert NFA to DFA using subset construction technique
-
-=cut
 
 sub to_dfa {
   my $self = shift;
@@ -680,13 +520,6 @@ sub to_dfa {
   return $DFA;
 }
 
-=item C<move>
-
-Get all transition states for the specific symbol
-**candidate for anonymous sub in NFA->to_dfa()
-
-=cut
-
 sub move {
   my $self = shift;
   my $symbol = shift;
@@ -710,13 +543,6 @@ sub move {
   # Returns ref to sorted subset array instead of list to preserve subset
   return sort(@T); 
 }
-
-=item C<epsilon_closure>
-
-Peform e-closure - get all the states that the provided subset of states transitions to on epsilon (empty string)
-**candidate for anonymous sub in NFA->to_dfa()
-
-=cut
 
 sub epsilon_closure {
   my $self = shift;
@@ -743,12 +569,6 @@ sub epsilon_closure {
   # Returns ref to sorted subset array instead of list to preserve subset
   return sort(@closure); 
 }
-
-=item C<info>
-
-Return string with info
-
-=cut
 
 sub info {
   my $self = shift;
@@ -782,12 +602,6 @@ sub info {
   return $out;
 }
 
-=item C<serialize>
-
-Prints a valid string suitable for an input to stdout
-
-=cut
-
 sub serialize {
   my $self = shift;
   my $out = '';
@@ -811,21 +625,9 @@ sub serialize {
   return $out;
 }
 
-=item C<generate_random>
-
-Generates random DFA; not implemented
-
-=cut
 sub generate_random {
   my $self = shift;
 }
-
-=item C<generate_from_strings>
-
-Will be used to create an NFA that will accept @THIS, but
-not @THAT 
-
-=cut
 
 sub generate_from_strings {
   my $self = shift;
@@ -834,7 +636,21 @@ sub generate_from_strings {
 
 1;
 
-=back
+__END__
+
+=head1 NAME
+
+NFA - A non deterministic finite automata base class
+
+=head1 SYNOPSIS
+
+    use NFA;
+
+=head1 DESCRIPTION
+
+This module implements a non deterministic finite automata,
+including support for epsilon transitions and conversion
+to a deterministic finite automata.
 
 =head1 AUTHOR
 

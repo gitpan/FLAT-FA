@@ -1,68 +1,4 @@
-# $Revision: 1.2 $ $Date: 2006/02/21 14:43:40 $ $Author: estrabd $
-
-=head1 NAME
-
-RE - A regular expression base class
-
-=head1 SYNOPSIS
-
-    use RE;
-    use DFA;
-    my $re = RE->new();
-    $re->set_re('a|b|(hi)*');
-    my $dfa = $re->to_dfa();
-    print $dfa->info(); # see stuff on DFA
-
-=head1 DESCRIPTION
-
-This module implements a regular expression
-parser, and supports the conversion of a RE to
-a deterministic finite automata.  A homegrown recursive
-descent parser is used to build the parse tree, and the method
-used to conver the regular expression to a DFA uses no intermediate
-NFA.
-
-Recursive Descent-safe Regex Grammar:
-
- R  -> O
-
- O  -> CO'
-
- O' -> '|' CO' | epsilon
-
- C  -> SC'
-
- C' -> .SC' | epsilon
-
- S  -> LS'
-
- S' -> *S' | epsilon
-
- L  -> a | b | c |..| 0 | 1 | 2 |..| (R) | epsilon
-
- Terminal symbols: a,b,c,..,z,0,1,2,..,9,|,*,(,)
-
- NOTE: Concatenation operator, '.', is not a terminal symbol
- and should not be included in the regex
-
- FAQ:
-   Q: Does this support Perl regular expressions?
-   A: No, just the regular expression using the terminal symbols
-      listed above.
-
-B<Valid terminal characters include:>
-
-I<a b c d e f g h i j k l m n o p q r s t u v w x y z>
-
-I<A B C D E F G H I J K L M N O P Q R S T U V W X Y Z>
-
-I<0 1 2 3 4 5 6 7 8 9 + - = , ? & [ ] { } . ~ ^ @ % $>
-
-I<: ; < >>
-
-B<Methods>
-
-=cut
+# $Revision: 1.4 $ $Date: 2006/02/27 17:42:18 $ $Author: estrabd $
 
 package FLAT::FA::RE;
 
@@ -73,14 +9,6 @@ use Carp;
 use FLAT::FA::NFA;
 use FLAT::FA::DFA;
 use Data::Dumper;
-
-=over 1 
-
-=item C<new>
-
-Create a brand spaking new RE object; does not accept regex here
-
-=cut
 
 sub new {
   my $class = shift;
@@ -100,19 +28,12 @@ sub new {
     _SYMBOL_POS  => [],
     _TERMINALS => [qw(a b c d e f g h i j k l m n o p q r s t u v w x y z 
                       A B C D E F G H I J K L M N O P Q R S T U V W X Y Z 
-		      0 1 2 3 4 5 6 7 8 9 + - = , ? & [ ] { } . ~ ^ @ % $
+		      0 1 2 3 4 5 6 7 8 9 + - = ? & [ ] { } . ~ ^ @ % $
 		      : ; < >)],
     _TRACE => 0,
     _SYMBOLS => [],
   }, $class;
 }
-
-=item C<set_epsilon>
-
-Not really for public consumption, but could be in the future.  Defines
-how epsilon (i.e., the null string) is represented in the parse tree.
-
-=cut
 
 sub set_epsilon {
   my $self = shift;
@@ -122,23 +43,10 @@ sub set_epsilon {
   return;
 }
 
-=item C<get_epsilon_symbol>
-
-Returns the string representation of the null string
-
-=cut
-
 sub get_epsilon_symbol {
   my $self = shift;
   return $self->{_EPSILON};
 }
-
-
-=item C<set_re>
-
-Defines a regular expression for RE to parse through
-
-=cut
 
 sub set_re {
   my $self = shift;
@@ -174,24 +82,10 @@ sub set_re {
   return;
 }
 
-
-=item C<get_re>
-
-Returns the regular expression set by C<set_re> as a string
-
-=cut
-
 sub get_re {
   my $self = shift;
   return $self->{_RE};
 }
-
-=item C<set_current>
-
-Meant for private consumption.  Initializes the stack used to store
-what part of the regex has yet to be parsed
-
-=cut
 
 sub set_current {
   my $self = shift;
@@ -201,61 +95,27 @@ sub set_current {
   return;
 }
 
-=item C<reset_current>
-
-Meant for private consumption.  Initializes the stack used to store
-what part of the regex has yet to be parsed
-
-=cut
-
 sub reset_current {
   my $self = shift;
   @{$self->{_CURRENT_STR}} = split(//,$self->get_re());
   return;
 }
 
-=item C<get_current>
-
-Returns what is in the _CURRENT_STR stack
-
-=cut
-
 sub get_current {
   my $self = shift;
   return $self->{_CURRENT_STR};
 }
 
-=item C<minimize>
-
-Minimizes the regular expression optimally
-
-=cut
-
 sub minimize {
   my $self = shift;
-  
   return;
 }
-
-=item C<shrink>
-
-Shrinks RE using hueristics to create a 'small enough' equivalent expression
-
-=cut
 
 sub shrink {
   my $self = shift;
 
   return;
 }
-
-=item C<to_nfa>
-
-Not implemented, but will create an NFA using Thompson's Method; from there
-one could do a NFA->to_dfa, and compare the resulting dfa to the one from 
-RE->to_dfa.
-
-=cut
 
 sub to_nfa {
   my $self = shift;
@@ -267,12 +127,6 @@ sub to_nfa {
   my $NFA = $self->thompson($self->get_parse_tree());
   return $NFA;
 }
-
-=item C<thompson>
-
-Guts of RE->to_nfa; uses depth first parse tree traversal
-
-=cut
 
 sub thompson {
   my $self = shift;
@@ -309,15 +163,7 @@ sub thompson {
   return $NFA_l;
 }
 
-=item C<to_dfa>
-
-Currently BREAKS on a*(b|cd)m!!!!!!!!!!!!!!
-
-Main driver which is used to convert the regular expression to a DFA; calls
-RE->parse() internally if _PARSE_TREE is !defined, so no need to call before this function.
-
-=cut
-
+#Currently BREAKS on a*(b|cd)m!!!!!!!!!!!!!!
 sub to_dfa_BROKEN {
   my $self = shift;
   # parse re if _PARSE_TREE is not defined
@@ -386,30 +232,16 @@ sub to_dfa_BROKEN {
   return $DFA;
 }
 
-
-=item C<get_transitions_on>
-
-Provides a way to get the transitions using the contents of the _FOLLOW_POS table
-
-=cut
-
 sub get_transition_on {
   my $self = shift;
   my $state = shift;
   my $symbol = shift;
   my @ret = undef;
-  if (@{$self->{_SYMBOL_POS}}->[$state-1] eq $symbol) {
+  if (@{$self->{_SYMBOL_POS}}[$state-1] eq $symbol) {
     @ret = @{$self->{_FOLLOW_POS}->{$state}};
   }
   return @ret;
 }
-
-=item C<move>
-
-Called by RE->to_re to get the sub set of new states for each sub set of states during
-the sub state construction process of building the DFA
-
-=cut
 
 sub move {
   my $self = shift;
@@ -434,12 +266,6 @@ sub move {
   # Returns ref to sorted subset array instead of list to preserve subset
   return sort(@T); 
 }
-
-=item C<firstpos>
-
-Determines firt positions for all nodes in the a parse tree
-
-=cut
 
 sub firstpos {
   my $self = shift;
@@ -487,12 +313,6 @@ sub firstpos {
   return $tree;
 }
 
-=item C<lastpost>
-
-Determines the last postition for all nodes in the parse tree
-
-=cut
-
 sub lastpos {
   my $self = shift;
   my $tree = shift;
@@ -539,12 +359,6 @@ sub lastpos {
   return $tree;
 }
 
-=item C<followpos>
-
-Determines the first postition for all nodes in the parse tree
-
-=cut
-
 sub followpos {
   my $self = shift;
   my $tree = shift;
@@ -568,12 +382,6 @@ sub followpos {
   }
 }
 
-=item C<followpos>
-
-Returns hash containing follow position table
-
-=cut
-
 sub get_followpos {
   my $self = shift;
   return $self->{_FOLLOW_POS};
@@ -582,12 +390,6 @@ sub get_followpos {
 ################################################################
 # Recursive Descent routines - parse tree is constructed here  # 
 ################################################################
-
-=item C<parse>
-
-Parses regular expressin set by RE->set_re, and stores the parse tree in _PARSE_TREE
-
-=cut
 
 sub parse {
   my $self = shift;
@@ -600,24 +402,11 @@ sub parse {
   return;
 }
 
-=item C<cat_endmarker>
-
-Adds '#', or the end of regex marker to the parse tree; not for public consumption
-
-=cut
-
 sub cat_endmarker {
   my $self = shift;
   $self->{_PARSE_TREE} = {symbol=>'.',left=>$self->{_PARSE_TREE},right=>{symbol=>$self->{_RE_END_SYMBOL},pos=>$self->get_next_pos()}};
   return; 
 }
-
-=item C<match>
-
-Matches current terminal symbol with terminal character,
-and loads up the next lookahead character
-
-=cut
 
 sub match {
   my $self = shift;
@@ -634,22 +423,10 @@ sub match {
   return $match;
 }
 
-=item C<lookahead>
-
-Returns value of current lookahead
-
-=cut
-
 sub lookahead {
   my $self = shift;
   return $self->{_LOOKAHEAD};
 }
-
-=item C<nexttoken>
-
-Sets next token as lookahead
-
-=cut
 
 sub nexttoken {
   my $self = shift;
@@ -659,12 +436,6 @@ sub nexttoken {
   }
   return;
 }
-
-=item C<R>
-
-R  -> O
-
-=cut
 
 sub R {
   my $self = shift;
@@ -677,12 +448,6 @@ sub R {
   return $tree;
 }
 
-=item C<O>
-
-O  -> CO'
-
-=cut
-
 sub O {
   my $self = shift;
   my $tree = shift;
@@ -694,12 +459,6 @@ sub O {
   if ($self->{_TRACE}) {print "O> "};  
   return $tree;
 }
-
-=item C<O_prime>
-
-O' -> '|'CO' | epsilon
-
-=cut
 
 sub O_prime {
   my $self = shift;
@@ -727,12 +486,6 @@ sub O_prime {
   return $tree;
 }
 
-=item C<C>
-
-C  -> SC'
-
-=cut
-
 sub C {
   my $self = shift;
   my $tree = shift;
@@ -744,12 +497,6 @@ sub C {
   if ($self->{_TRACE}) {print "C> "};
   return $tree;
 }
-
-=item C<C_prime>
-
-C' -> .SC' | epsilon
-
-=cut
 
 sub C_prime {
   my $self = shift;
@@ -776,12 +523,6 @@ sub C_prime {
   return $tree;
 }
 
-=item C<S>
-
-S  -> LS'
-
-=cut
-
 sub S {
   my $self = shift;
   my $tree = shift;
@@ -793,12 +534,6 @@ sub S {
   if ($self->{_TRACE}) {print "S> "};  
   return $tree;
 }
-
-=item C<S_prime>
-
-S' -> *S' | epsilon
-
-=cut
 
 sub S_prime {
   my $self = shift;
@@ -814,12 +549,6 @@ sub S_prime {
   if ($self->{_TRACE}) {print "S'> "};  
   return $tree;
 }
-
-=item C<L>
-
-L  -> a | b | c |..| 0 | 1 | 2 |..| (R)
-
-=cut
 
 sub L {
   my $self = shift;
@@ -851,33 +580,15 @@ sub L {
   return $tree;
 }
 
-=item C<get_next_pos>
-
-Returns the next position, used in creating leaf nodes for terminal symbols (minus null string)
-
-=cut
-
 sub get_next_pos {
   my $self = shift;
   return ++$self->{_POS_COUNT};
 }
 
-=item C<get_curr_pos>
-
-Returns the current count of terminal symbols (minus null string)
-
-=cut
-
 sub get_curr_pos {
   my $self = shift;
   return $self->{_POS_COUNT};
 }
-
-=item C<set_parse_tree>
-
-Set parse tree
-
-=cut
 
 sub set_parse_tree {
   my $self = shift;
@@ -885,44 +596,20 @@ sub set_parse_tree {
   return;
 }
 
-=item C<get_parse_tree>
-
-Return parse tree
-
-=cut
-
 sub get_parse_tree {
   my $self = shift;
   return $self->{_PARSE_TREE};
 }
-
-=item C<get_terminals>
-
-Returns array of terminal symbols
-
-=cut
 
 sub get_terminals {
   my $self = shift;
   return @{$self->{_TERMINALS}};
 }
 
-=item C<is_terminal>
-
-Checks to see if given character is a terminal symbol
-
-=cut
-
 sub is_terminal {
   my $self = shift;
   return $self->is_member(shift,$self->get_terminals());
 }
-
-=item C<is_member>
-
-General subroutine used to test if an element is already in an array
-
-=cut
 
 sub is_member {
   my $self = shift;
@@ -933,34 +620,14 @@ sub is_member {
     if (grep {$_ eq $test} @_) {
       $ret++;
     }
-#    foreach (@_) {
-#      if (defined($_)) {
-#	if ($test eq $_) {
-#	  $ret++;
-#	  last;
-#	}
-#      }
-#    }
   }
   return $ret;
 }
-
-=item C<get_symbols>
-
-Returns array of all symbols used in current regex
-
-=cut
 
 sub get_symbols {
   my $self = shift;
   return @{$self->{_SYMBOLS}}; 
 }
-
-=item C<trace_on>
-
-Turns on tracing - allows to trace the recursive descent parsing
-
-=cut
 
 sub trace_on {
   my $self = shift;
@@ -968,34 +635,16 @@ sub trace_on {
   return;
 }
 
-=item C<trace_off>
-
-Turns tracing off 
-
-=cut
-
 sub trace_off {
   my $self = shift;
   $self->{_TRACE} = 0;
   return;
 }
 
-=item C<trace>
-
-Returns value of _TRACE
-
-=cut
-
 sub trace {
   my $self = shift;
   return $self->{_TRACE};
 }
-
-=item C<toggle_cat_state>
-
-Toggles cat state instead of cat'ing a '.' to everything
-
-=cut
 
 sub toggle_cat_state {
   my $self = shift;
@@ -1003,68 +652,30 @@ sub toggle_cat_state {
   return;
 }
 
-=item C<get_cat_state>
-
-Returns $self->{_CAT_STATE} (1|0)
-
-=cut
-
 sub get_cat_state {
   my $self = shift;
   return $self->{_CAT_STATE}; 
 }
-
-=item C<set_error>
-
-Increments error count for regex parsing
-
-=cut
 
 sub set_error {
   my $self = shift;
   $self->{_ERROR}++;
 }
 
-=item C<get_error>
-
-Returns error count
-
-=cut
-
 sub get_error {
   my $self = shift;
   return $self->{_ERROR};
 }
-
-=item C<set_done>
-
-Sets done flag
-
-=cut
 
 sub set_done {
   my $self = shift;
   $self->{_DONE}++;
 } 
 
-=item C<done>
-
-Returns if done or not
-
-=cut
-
 sub done {
   my $self = shift;
   return $self->{_DONE};
 }
-
-=item C<DESTROY>
-
-Called automatically when object is destroyed either explicitly
-or automatically when references go to 0 or when the main program
-is finished
-
-=cut
 
 sub DESTROY {
   return;
@@ -1072,7 +683,67 @@ sub DESTROY {
 
 1;
 
-=back
+__END__
+
+=head1 NAME
+
+RE - A regular expression base class
+
+=head1 SYNOPSIS
+
+    use RE;
+    use DFA;
+    my $re = RE->new();
+    $re->set_re('a|b|(hi)*');
+    my $dfa = $re->to_dfa();
+    print $dfa->info(); # see stuff on DFA
+
+=head1 DESCRIPTION
+
+This module implements a regular expression
+parser, and supports the conversion of a RE to
+a deterministic finite automata.  A homegrown recursive
+descent parser is used to build the parse tree, and the method
+used to conver the regular expression to a DFA uses no intermediate
+NFA.
+
+Recursive Descent-safe Regex Grammar:
+
+ R  -> O
+
+ O  -> CO'
+
+ O' -> '|' CO' | epsilon
+
+ C  -> SC'
+
+ C' -> .SC' | epsilon
+
+ S  -> LS'
+
+ S' -> *S' | epsilon
+
+ L  -> a | b | c |..| 0 | 1 | 2 |..| (R) | epsilon
+
+ Terminal symbols: a,b,c,..,z,0,1,2,..,9,|,*,(,)
+
+ NOTE: Concatenation operator, '.', is not a terminal symbol
+ and should not be included in the regex
+
+ FAQ:
+   Q: Does this support Perl regular expressions?
+   A: No, just the regular expression using the terminal symbols
+      listed above.
+
+B<Valid terminal characters include:>
+
+I<a b c d e f g h i j k l m n o p q r s t u v w x y z>
+
+I<A B C D E F G H I J K L M N O P Q R S T U V W X Y Z>
+
+I<0 1 2 3 4 5 6 7 8 9 + - = ? & [ ] { } . ~ ^ @ % $>
+
+I<: ; < >>
 
 =head1 AUTHOR
 
