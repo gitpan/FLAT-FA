@@ -1,4 +1,4 @@
-# $Revision: 1.4 $ $Date: 2006/02/27 17:42:18 $ $Author: estrabd $
+# $Revision: 1.5 $ $Date: 2006/03/02 21:00:28 $ $Author: estrabd $
 
 package FLAT::FA::DFA;
 
@@ -608,7 +608,7 @@ DFA - A determinisitic finite automata base class
 
 =head1 SYNOPSIS
 
-    use DFA;
+    use FLAT::FA::DFA;
 
 =head1 DESCRIPTION
 
@@ -627,17 +627,20 @@ and set of all states.
 
 =head1 BUGS
 
-Not saying it is bug free, just saying I haven't hit any yet :)
+I haven't hit any yet, but every now and then C<minimize> makes me pause, thoughthis might have more to do with my lack of intuition than the minimization being done incorrectly.
 
 =head1 AVAILABILITY
 
-Anonymous CVS Checkout at L<http://www.brettsbsd.net/cgi-bin/viewcvs.cgi/>
+Perl FLaT Project Website at L<http://perl-flat.sourceforge.net/pmwiki>
 
 =head1 ACKNOWLEDGEMENTS
 
 This suite of modules started off as a homework assignment for a compiler
 class I took for my MS in computer science at the University of Southern
-Mississippi.
+Mississippi.  It then became the basis for my MS research. and thesis.
+
+Mike Rosulek has joined the effort, and is heading up the rewrite of
+Perl FLaT, which will soon be released as FLaT 1.0.
 
 =head1 COPYRIGHT
 

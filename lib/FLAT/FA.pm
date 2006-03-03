@@ -1,4 +1,4 @@
-# $Revision: 1.4 $ $Date: 2006/02/27 17:42:18 $ $Author: estrabd $
+# $Revision: 1.5 $ $Date: 2006/03/02 21:00:28 $ $Author: estrabd $
 
 package FLAT::FA;
 
@@ -290,14 +290,11 @@ FA - A finite automata base class
 
 =head1 SYNOPSIS
 
-    use FA;
+    use FLAT::FA;
 
 =head1 DESCRIPTION
 
-This module is a base finite automata 
-used by NFA and DFA to encompass 
-common functions.  It is probably of no use
-other than to organize the DFA and NFA modules.
+This module is a base finite automata used by NFA and DFA to encompass common functions.  It is probably of no use other than to organize the DFA and NFA modules.
 
 =head1 AUTHOR
 
@@ -305,23 +302,21 @@ Brett D. Estrade - <estrabd AT mailcan DOT com>
 
 =head1 CAVEATS
 
-Currently, all states are stored as labels.  There is also
-no integrity checking for consistency among the start, final,
-and set of all states.
+Currently, all states are stored as labels.  There is also no integrity checking for consistency among the start, final, and set of all states.
 
 =head1 BUGS
 
-Not saying it is bug free, just saying I haven't hit any yet :)
+I haven't hit any yet :)
 
 =head1 AVAILABILITY
 
-Anonymous CVS Checkout at L<http://www.brettsbsd.net/cgi-bin/viewcvs.cgi/>
+Perl FLaT Project Website at L<http://perl-flat.sourceforge.net/pmwiki>
 
 =head1 ACKNOWLEDGEMENTS
 
-This suite of modules started off as a homework assignment for a compiler
-class I took for my MS in computer science at the University of Southern
-Mississippi.  It then became the basis for my MS research. and thesis.
+This suite of modules started off as a homework assignment for a compiler class I took for my MS in computer science at the University of Southern Mississippi.  It then became the basis for my MS research. and thesis.
+
+Mike Rosulek has joined the effort, and is heading up the rewrite of Perl FLaT, which will soon be released as FLaT 1.0.
 
 =head1 COPYRIGHT
 

@@ -1,4 +1,4 @@
-# $Revision: 1.4 $ $Date: 2006/02/27 17:42:18 $ $Author: estrabd $
+# $Revision: 1.5 $ $Date: 2006/03/02 21:00:28 $ $Author: estrabd $
 
 package FLAT::FA::RE;
 
@@ -691,12 +691,17 @@ RE - A regular expression base class
 
 =head1 SYNOPSIS
 
-    use RE;
-    use DFA;
+    use FLAT::FA::RE;
+    use FLAT::FA::NFA;
     my $re = RE->new();
     $re->set_re('a|b|(hi)*');
-    my $dfa = $re->to_dfa();
+    my $nfa = $re->to_nfa();
+    print $nfa->info(); # see stuff on NFA
+    my $dfa = $nfa->to_dfa(); 
     print $dfa->info(); # see stuff on DFA
+    my @removed = $dfa->minimize();
+    print $dfa->info(); # see stuff on minimized DFA
+    print "Removed ".($#removed+1)." states\n";
 
 =head1 DESCRIPTION
 
@@ -757,17 +762,22 @@ and set of all states.
 
 =head1 BUGS
 
-Not saying it is bug free, just saying I haven't hit any yet :)
+C<to_dfa> is broken, and is now listed as C<to_dfa_BROKEN> so there
+is no confusion.  I am currently debating whether or not to fix it,
+or reimplement it in FLaT 1.0.
 
 =head1 AVAILABILITY
 
-Anonymous CVS Checkout at L<http://www.brettsbsd.net/cgi-bin/viewcvs.cgi/>
+Perl FLaT Project Website at L<http://perl-flat.sourceforge.net/pmwiki>
 
 =head1 ACKNOWLEDGEMENTS
 
 This suite of modules started off as a homework assignment for a compiler
 class I took for my MS in computer science at the University of Southern
-Mississippi.
+Mississippi.  It then became the basis for my MS research. and thesis.
+
+Mike Rosulek has joined the effort, and is heading up the rewrite of
+Perl FLaT, which will soon be released as FLaT 1.0.
 
 =head1 COPYRIGHT
 

@@ -1,8 +1,7 @@
 # http://module-build.sourceforge.net/META-spec.html
 #XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
 name:         FLAT
-version: 0.4
-version_from: lib/FLAT.pm
+version: 0.5
 installdirs:  site
 requires:
 
